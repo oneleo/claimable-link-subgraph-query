@@ -1,14 +1,13 @@
 import { useState } from "react";
+import "./App.css";
 import reactLogo from "./assets/react.svg";
 import viteLogo from "/vite.svg";
-import "./App.css";
 
-import { stringify, queryDepositClaimedFromGiver } from "./util";
+import { queryDepositClaimedFromGiver, stringify } from "./util";
 
 const SUBGRAPH_QUERY_URL = `https://api.studio.thegraph.com/query/37898/claimable-link-subgraph/version/latest`;
 
 function App() {
-  const [count, setCount] = useState(0);
   const [executing, setExecuting] = useState<string>(``);
   const [message, setMessage] = useState<string>(``);
   const [errorMessage, setErrorMessage] = useState<string>(``);
@@ -32,15 +31,19 @@ function App() {
           `Index: ${index}\nGiver: ${giver}\nToken: ${token}\nTransferID: ${transferID}`
         );
       }
+      const linkNumber = response.data.depositClaimeds.length;
+      const msg = `Number of links: ${linkNumber}\nQuery response: ${stringify(
+        response
+      )}`;
 
-      const msg = `Query response: ${stringify(response)}`;
-      //   console.log(msg);
       console.log(`Refer: https://dune.com/irara/ethtaipeiarb-claimable-link`);
       setMessage(`${msg}`);
     } catch (error) {
       const errorMessage =
         error instanceof Error ? error.message : String(error);
-      console.error(`Error: ${errorMessage}`);
+
+      console.error(errorMessage);
+      setErrorMessage(errorMessage);
     }
 
     setExecuting(``);
@@ -58,19 +61,6 @@ function App() {
       </div>
 
       <h1>Vite + React</h1>
-
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
 
       <div>
         {executing && (
@@ -95,13 +85,13 @@ function App() {
       </div>
 
       <div className="card">
-        <h3>Target Contract (Get)</h3>
+        <h3>Claimable Link</h3>
 
         <button
           onClick={queryDepositClaimed}
           disabled={!!executing || !!errorMessage}
         >
-          Get Contract "State"
+          Query Unclaim Link
         </button>
       </div>
 
